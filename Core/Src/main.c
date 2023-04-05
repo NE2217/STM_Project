@@ -87,17 +87,17 @@ int Dim(int count_LED, int on, int off)
 		return 0;
 }
 
-void setPWM(uint16_t value)
-{
-    TIM_OC_InitTypeDef sConfigOC;
+//void setPWM(uint16_t value)
+//{
+//    TIM_OC_InitTypeDef sConfigOC;
 
-    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = value;
-    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-    HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3); 
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-}
+//    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+//    sConfigOC.Pulse = value;
+//    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+//    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+//    HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3); 
+//    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+//}
 /* USER CODE END 0 */
 
 /**
@@ -132,7 +132,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
-  __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period/2);
+//__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period/2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -148,13 +148,15 @@ HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
   while (1)
   {
 		
-		if(perc == 1) step = 1;
-	  if(perc == 500) step = -1;
-	  perc += step;
+//		if(perc == 1) step = 1;
+//	  if(perc == 500) step = -1;
+//	  perc += step;
 	 // setPWM(perc);
-	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period*perc/500);
-  	HAL_Delay(5);
-		
+		for (perc=20; perc<=40; perc++)
+		{
+	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period*perc/1000);
+  	HAL_Delay(200);
+		}
 		/*HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 		HAL_Delay(500);*/
 		
@@ -247,9 +249,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 63;
+  htim1.Init.Prescaler = 160-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 499;
+  htim1.Init.Period = 1000-1;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
