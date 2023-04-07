@@ -42,6 +42,9 @@
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim1;
 
+UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -50,8 +53,10 @@ TIM_HandleTypeDef htim1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_USART1_UART_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-void setPWM(uint16_t pwm_value);
+//void setPWM(uint16_t pwm_value);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -86,18 +91,9 @@ int Dim(int count_LED, int on, int off)
 		}
 		return 0;
 }
+uint16_t perc = 1;
+uint8_t Rx[3], Tx[3];
 
-//void setPWM(uint16_t value)
-//{
-//    TIM_OC_InitTypeDef sConfigOC;
-
-//    sConfigOC.OCMode = TIM_OCMODE_PWM1;
-//    sConfigOC.Pulse = value;
-//    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-//    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-//    HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_3); 
-//    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-//}
 /* USER CODE END 0 */
 
 /**
@@ -107,7 +103,14 @@ int Dim(int count_LED, int on, int off)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+#include "stm32f10x.h"                  // Device header
 
+	for(unsigned char i=0; i<3; i++)
+	{
+	Rx[i]=0;
+	Tx[i]=0;	
+	}	
+	
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -129,9 +132,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM1_Init();
+  MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-
+//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+	
 //__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period/2);
   /* USER CODE END 2 */
 
@@ -141,47 +146,32 @@ HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 	//#include <LID_func.h>
 	uint8_t count_LED=0, on=1, off=10;
 	_Bool up=1;
-	uint16_t T=0;
-	
-	uint16_t perc = 1;
+	uint16_t T=0;	
 	int8_t step = 1;
+	
+	
   while (1)
   {
+		//HAL_UART_Transmit_IT(&huart2, transmitBuffer, BUFFER_SIZE);		
+		//HAL_UART_Receive_IT(&huart1, receiveBuffer, BUFFER_SIZE);		
 		
-//		if(perc == 1) step = 1;
-//	  if(perc == 500) step = -1;
-//	  perc += step;
-	 // setPWM(perc);
-		for (perc=20; perc<=40; perc++)
-		{
-	__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period*perc/1000);
-  	HAL_Delay(200);
-		}
-		/*HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-		HAL_Delay(500);*/
-		
-//		if (on==off)
-//		{up=0;}
-//		else if (on==1)
-//		{
-//			up=1;
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-//			HAL_Delay(50);
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-//			HAL_Delay(50);
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-//			HAL_Delay(50);
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-//			HAL_Delay(50);
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-//		}
-//		
-//		if(up)
-//		{on+=1;}
-//		else if(!up)
-//		{on-=1;}
-//			
-//		Dim(count_LED, on, off);
+		//HAL_UART_Transmit_IT(&huart1, Tx, 10);		
+		//HAL_UART_Receive(&huart1, Rx, 32, 50);	
+
+  // ???????? ????? ? ???????? ??????
+  if( HAL_UART_Receive(&huart1, Tx, 1, 20) == HAL_OK ) continue;
+
+  // ???????? 1?? ????? ???????
+  while ( HAL_UART_Receive(&huart1, Tx, 1, 10) != HAL_OK ) ;
+
+  // ????? ?????????? 2? ?????? ???????
+  if( HAL_UART_Receive(&huart1, &Tx[1], 2, 20) != HAL_OK ) continue;
+
+  // ???????? ???????
+  if (Tx[0] != '!') continue;
+
+   HAL_UART_Transmit(&huart1, "Ok\r\n\0", 5, 30);		
+	
 	}
     /* USER CODE END WHILE */
 
@@ -249,9 +239,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 160-1;
+  htim1.Init.Prescaler = 1600-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 1000-1;
+  htim1.Init.Period = 10000-1;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -304,6 +294,72 @@ static void MX_TIM1_Init(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 9600;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 9600;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -318,6 +374,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin : LED_Pin */
   GPIO_InitStruct.Pin = LED_Pin;
