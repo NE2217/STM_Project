@@ -92,8 +92,25 @@ int Dim(int count_LED, int on, int off)
 		return 0;
 }
 uint16_t perc = 1;
-uint8_t Rx[3], Tx[3];
+uint8_t Rx=0, Tx=0;
+uint8_t RxBuf[9]={0}, TxBuf[9]={0};
+uint8_t swig=0;
+_Bool ready=0;
 
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)	
+{
+	if (ready==0) 
+	{	
+		RxBuf[swig]=Rx;	
+		swig++;
+		if (swig==9)
+		{
+		ready=1;
+		swig=0;
+		}
+	}	
+}
 /* USER CODE END 0 */
 
 /**
@@ -105,12 +122,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
 #include "stm32f10x.h"                  // Device header
 
-	for(unsigned char i=0; i<3; i++)
-	{
-	Rx[i]=0;
-	Tx[i]=0;	
-	}	
-	
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -152,6 +164,19 @@ int main(void)
 	
   while (1)
   {
+		HAL_UART_Receive_IT(&huart1, &Rx, 1);
+		
+		if (ready) 
+		{
+			for(uint8_t i=0; i<9; i++)
+			{
+				TxBuf[i]=RxBuf[i];
+				RxBuf[i]=0;
+			}
+			
+			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
+			ready=0;
+		}
 		//HAL_UART_Transmit_IT(&huart2, transmitBuffer, BUFFER_SIZE);		
 		//HAL_UART_Receive_IT(&huart1, receiveBuffer, BUFFER_SIZE);		
 		
@@ -159,18 +184,18 @@ int main(void)
 		//HAL_UART_Receive(&huart1, Rx, 32, 50);	
 
   // ???????? ????? ? ???????? ??????
-  if( HAL_UART_Receive(&huart1, Tx, 1, 20) == HAL_OK ) continue;
+//  if( HAL_UART_Receive(&huart1, Tx, 1, 20) == HAL_OK ) continue;
 
-  // ???????? 1?? ????? ???????
-  while ( HAL_UART_Receive(&huart1, Tx, 1, 10) != HAL_OK ) ;
+//  // ???????? 1?? ????? ???????
+//  while ( HAL_UART_Receive(&huart1, Tx, 1, 10) != HAL_OK ) ;
 
-  // ????? ?????????? 2? ?????? ???????
-  if( HAL_UART_Receive(&huart1, &Tx[1], 2, 20) != HAL_OK ) continue;
+//  // ????? ?????????? 2? ?????? ???????
+//  if( HAL_UART_Receive(&huart1, &Tx[1], 2, 20) != HAL_OK ) continue;
 
-  // ???????? ???????
-  if (Tx[0] != '!') continue;
+//  // ???????? ???????
+//  if (Tx[0] != '!') continue;
 
-   HAL_UART_Transmit(&huart1, "Ok\r\n\0", 5, 30);		
+//   HAL_UART_Transmit(&huart1, "Ok\r\n\0", 5, 30);		
 	
 	}
     /* USER CODE END WHILE */
@@ -207,7 +232,7 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+//  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;                                                !!!RCC_ClkInitStruct!!!
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
