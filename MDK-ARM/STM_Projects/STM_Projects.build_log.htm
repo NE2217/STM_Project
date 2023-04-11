@@ -22,7 +22,7 @@ Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
 C:\STM_Projects\MDK-ARM\STM_Projects.uvprojx
-Project File Date:  04/10/2023
+Project File Date:  04/11/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
@@ -6338,23 +6338,21 @@ C:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include\s
   #define  FLASH_WRP3_WRP3                     ((uint32_t)0x00FF0000)        /*!< Flash memory write protection option bytes */
 C:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include\stm32f10x.h(7877): warning:  #47-D: incompatible redefinition of macro "FLASH_WRP3_nWRP3"  (declared at line 9872 of "../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h")
   #define  FLASH_WRP3_nWRP3                    ((uint32_t)0xFF000000)        /*!< Flash memory write protection complemented option bytes */
-../Core/Src/main.c(159): warning:  #177-D: variable "count_LED"  was declared but never referenced
+../Core/Src/main.c(189): warning:  #177-D: variable "count_LED"  was declared but never referenced
   	uint8_t count_LED=0, on=1, off=10;
-../Core/Src/main.c(159): warning:  #177-D: variable "on"  was declared but never referenced
+../Core/Src/main.c(189): warning:  #177-D: variable "on"  was declared but never referenced
   	uint8_t count_LED=0, on=1, off=10;
-../Core/Src/main.c(159): warning:  #177-D: variable "off"  was declared but never referenced
+../Core/Src/main.c(189): warning:  #177-D: variable "off"  was declared but never referenced
   	uint8_t count_LED=0, on=1, off=10;
-../Core/Src/main.c(160): warning:  #177-D: variable "up"  was declared but never referenced
-  	_Bool up=1;
-../Core/Src/main.c(161): warning:  #177-D: variable "T"  was declared but never referenced
+../Core/Src/main.c(190): warning:  #177-D: variable "up"  was declared but never referenced
+  	bool up=1;
+../Core/Src/main.c(191): warning:  #177-D: variable "T"  was declared but never referenced
   	uint16_t T=0;	
-../Core/Src/main.c(162): warning:  #177-D: variable "step"  was declared but never referenced
-  	int8_t step = 1;
-../Core/Src/main.c: 3161 warnings, 0 errors
+../Core/Src/main.c: 3160 warnings, 0 errors
 linking...
-Program Size: Code=8260 RO-data=292 RW-data=24 ZI-data=1864  
+Program Size: Code=8564 RO-data=292 RW-data=52 ZI-data=1796  
 FromELF: creating hex file...
-"STM_Projects\STM_Projects.axf" - 0 Error(s), 3161 Warning(s).
+"STM_Projects\STM_Projects.axf" - 0 Error(s), 3160 Warning(s).
 
 <h2>Software Packages used:</h2>
 
