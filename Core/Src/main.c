@@ -247,18 +247,18 @@ HAL_TIM_Base_Start_IT(&htim1);
 		//GPIO_Write(GPIOA,255,false);
 		//GPIO_Write(GPIOA,102,true);
 		
-//		HAL_UART_Receive_IT(&huart1, &Rx, 1);
-//		
-//		if (ready) 
-//		{
-//			for(uint8_t i = 0; i < 9; i++)
-//			{
-//				TxBuf[i]=RxBuf[i];
-//				RxBuf[i]=0;
-//			}
-//			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
-//			ready=0;
-//		}
+		HAL_UART_Receive_IT(&huart1, &Rx, 1);
+		
+		if (ready) 
+		{
+			for(uint8_t i = 0; i < 9; i++)
+			{
+				TxBuf[i]=RxBuf[i];
+				RxBuf[i]=0;
+			}
+			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
+			ready=0;
+		}
 		
 //GPIO_Write(GPIOA, 76, GPIO_PIN_SET);		
 		
