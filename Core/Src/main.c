@@ -96,7 +96,14 @@ uint16_t A,B,C, P1, P2, P3, P4 = 1;
 uint8_t Rx=0, Tx=0;
 uint8_t RxBuf[RX_BUF_SIZE]={0}, TxBuf[RX_BUF_SIZE]={0};
 uint8_t shift=0;
-uint8_t Tim[8]={0};
+uint8_t Tim[8]={1,		// Control
+								23, 	// Year
+								4, 		// Month
+								17,		// Data
+								10, 	// Hour
+								16, 	// Min
+								2, 		// Sec
+								1};		// Day
 bool ready=0;
 
 uint16_t Num[10]={63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
@@ -185,7 +192,6 @@ DS1302_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 	
-	
 //HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 HAL_TIM_Base_Start_IT(&htim1);	
 //__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period/2);
@@ -202,20 +208,8 @@ HAL_TIM_Base_Start_IT(&htim1);
 	
   while (1)
   {
-		if (B==100)
-		{
-			if (step==0) step=1000;
-			step-=1;
-			B=0;
-			
-	P1 = step/1000;
-	P2 =(step/100)%10;
-	P3 =(step/10)%10;
-  P4 = step%10;
-		}	
-		GPIO_Write(step);
-	
-		DS1302_ReadTime(Tim);
+		DS1302_ReadTimeBurst(Tim);
+		GPIO_Write(Tim[4]*100+Tim[5]);
 		/*	
 	GPIOA->BSRR=65535 << 16u;//сбросить все
 	GPIOB->BSRR=65535;//установить все		
