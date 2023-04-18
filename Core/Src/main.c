@@ -90,13 +90,14 @@ static void MX_USART1_UART_Init(void);
 //		}
 //		return 0;
 //}
-#define RX_BUF_SIZE			9u
+#define RX_BUF_SIZE			8u
 #define Last						4u
 uint16_t A,B,C, P1, P2, P3, P4 = 1;
 uint8_t Rx=0, Tx=0;
 uint8_t RxBuf[RX_BUF_SIZE]={0}, TxBuf[RX_BUF_SIZE]={0};
 uint8_t shift=0;
-uint8_t Tim[8]={1,		// Control
+uint8_t Tim[8]={0};
+uint8_t Init_Tim[8]={1,		// Control
 								23, 	// Year
 								4, 		// Month
 								17,		// Data
@@ -111,15 +112,18 @@ uint16_t Buf[4]={0, 0, 0, 0};
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)	
 {
-	if (ready == false) 
+	if (! ready) 
 	{	
 		RxBuf[shift] = Rx;	
 		shift++;
-
+		HAL_UART_Receive_IT(&huart1, &Rx, 1);
 		if (shift == RX_BUF_SIZE)
 		{
-			ready=1;
 			shift=0;
+			if (RxBuf[RX_BUF_SIZE-1]==255)
+			{
+				ready=true;
+			}	
 		}
 	}	
 }
@@ -206,10 +210,24 @@ HAL_TIM_Base_Start_IT(&htim1);
 	uint16_t T=0;	
 	uint16_t step = 9999;
 	
+	HAL_UART_Receive_IT(&huart1, &Rx, 1);
+	
   while (1)
   {
 		DS1302_ReadTimeBurst(Tim);
 		GPIO_Write(Tim[4]*100+Tim[5]);
+		
+		if (ready)
+		{
+			for (int i=0; i<7; i++)
+			{
+			Init_Tim[i+1]=RxBuf[i];
+				RxBuf[i]=0;
+			}	
+			Init_Tim[0]=1;
+			RxBuf[8]=0;
+			DS1302_WriteTime(Init_Tim);
+		}
 		/*	
 	GPIOA->BSRR=65535 << 16u;//сбросить все
 	GPIOB->BSRR=65535;//установить все		
@@ -246,8 +264,6 @@ HAL_TIM_Base_Start_IT(&htim1);
 				
 		//GPIO_Write(GPIOA,255,false);
 		//GPIO_Write(GPIOA,102,true);
-		
-		HAL_UART_Receive_IT(&huart1, &Rx, 1);
 		
 		if (ready) 
 		{
