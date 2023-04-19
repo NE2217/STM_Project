@@ -22,22 +22,40 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
+#include <string.h>
 #include "DS1302.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define RX_BUF_SIZE			8u
+#define TX_BUF_SIZE			8u
+#define LAST						4u
+#define LED_FREQ				500u/5u //время полупериода в мс, с шагом в 5мс
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+const uint16_t Num[10]={63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+uint16_t A,B,C, P1, P2, P3, P4 = 1;
+uint8_t Rx=0, Tx=0;
+uint8_t RxBuf[RX_BUF_SIZE]={0}, TxBuf[TX_BUF_SIZE]={0};
+uint8_t shift=0;
+uint8_t Tim[8]={0};
+uint8_t Led_step=0;
+uint8_t Init_Tim[8]={1,		// Control
+										23, 	// Year
+										4, 		// Month
+										17,		// Data
+										10, 	// Hour
+										16, 	// Min
+										2, 		// Sec
+										1};		// Day
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -68,46 +86,30 @@ static void MX_USART1_UART_Init(void);
 ////      }
 ////}
 
-//int Dim(int count_LED, int on, int off)
-//{
-//	for (int i=0; i<100; i++ )
-//		{
-//		if (count_LED>=off)
-//		{
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-//			count_LED=0;
-//		}
-//		else if(count_LED==on)
-//		{
-//			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-//			count_LED++;
-//		}
-//		else
-//		{
-//			count_LED++;
-//		}
-//		HAL_Delay(1);
-//		}
-//		return 0;
-//}
-#define RX_BUF_SIZE			8u
-#define Last						4u
-uint16_t A,B,C, P1, P2, P3, P4 = 1;
-uint8_t Rx=0, Tx=0;
-uint8_t RxBuf[RX_BUF_SIZE]={0}, TxBuf[RX_BUF_SIZE]={0};
-uint8_t shift=0;
-uint8_t Tim[8]={0};
-uint8_t Init_Tim[8]={1,		// Control
-								23, 	// Year
-								4, 		// Month
-								17,		// Data
-								10, 	// Hour
-								16, 	// Min
-								2, 		// Sec
-								1};		// Day
+int Dim(int count_LED, int on, int off)
+{
+	for (int i=0; i<100; i++ )
+		{
+		if (count_LED>=off)
+		{
+			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+			count_LED=0;
+		}
+		else if(count_LED==on)
+		{
+			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+			count_LED++;
+		}
+		else
+		{
+			count_LED++;
+		}
+		HAL_Delay(1);
+		}
+		return 0;
+}
 bool ready=0;
 
-uint16_t Num[10]={63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
 uint16_t Buf[4]={0, 0, 0, 0};
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)	
@@ -128,37 +130,39 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}	
 }
 
-
 void GPIO_Write(uint16_t N) //заполнение массива двузначного числа
 {
-//	Buf[0] =	~Num[N/10];
-//	Buf[1] =	~Num[N%10]+128;
 	Buf[0] =	Num[N/1000];
 	Buf[1] =	Num[(N/100)%10]+128;
 	Buf[2] =	Num[(N/10)%10];
 	Buf[3] =	Num[N%10]+128;
 }
-
-void TIM1_UP_IRQHandler(void)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  /* USER CODE BEGIN TIM1_UP_IRQn 0 */
-		
-	if(A >= Last) A=0;
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(htim);
 
-	GPIOA->BSRR=65535 << 16u;//сбросить все
-	GPIOB->BSRR=65535;//установить все		
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_TIM_PeriodElapsedCallback could be implemented in the user file
+   */
+	if(A >= LAST) A=0;
+	
+	GPIOA->BSRR=255 << 16u;//сбросить все
+	GPIOB->BSRR=15360;//установить все		
 	GPIOA->BSRR=(uint32_t) Buf[A];
 	GPIOB->BSRR=(uint32_t) (1024<<A) << 16u ;
 
 	A++;
 	B++;
-		
-  /* USER CODE END TIM1_UP_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim1);
-  /* USER CODE BEGIN TIM1_UP_IRQn 1 */
-
-  /* USER CODE END TIM1_UP_IRQn 1 */
+	
+	Led_step++;
+	if (Led_step==LED_FREQ)
+	{
+		Led_step=0;
+			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+	}
 }
+
 
 /* USER CODE END 0 */
 
@@ -169,8 +173,6 @@ void TIM1_UP_IRQHandler(void)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-#include "stm32f10x.h"                  // Device header
-	
 
   /* USER CODE END 1 */
 
@@ -180,7 +182,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-DS1302_Init();
+	DS1302_Init();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -196,14 +198,13 @@ DS1302_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 	
-//HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-HAL_TIM_Base_Start_IT(&htim1);	
-//__HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, htim1.Init.Period/2);
+	HAL_TIM_Base_Start_IT(&htim1);	
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//	HAL_TIM_Base_Start_IT(&htim1);
+
 	//#include <LID_func.h>
 	uint8_t count_LED=0, on=1, off=10;
 	bool up=1;
@@ -221,49 +222,16 @@ HAL_TIM_Base_Start_IT(&htim1);
 		{
 			for (int i=0; i<7; i++)
 			{
-			Init_Tim[i+1]=RxBuf[i];
+				Init_Tim[i+1]=RxBuf[i];
 				RxBuf[i]=0;
 			}	
 			Init_Tim[0]=1;
-			RxBuf[8]=0;
-			DS1302_WriteTime(Init_Tim);
+			RxBuf[7]=0;
+			if (memcmp(Init_Tim, Tim, 8) !=0)
+			{
+				DS1302_WriteTime(Init_Tim);
+			}	
 		}
-		/*	
-	GPIOA->BSRR=65535 << 16u;//сбросить все
-	GPIOB->BSRR=65535;//установить все		
-	GPIOA->BSRR=(uint32_t) Num[6];
-	GPIOB->BSRR=(uint32_t) (1024<<0) << 16u ;
-	HAL_Delay(500);	
-		
-		GPIOA->BSRR=65535 << 16u;//сбросить все
-	GPIOB->BSRR=65535;//установить все		
-	GPIOA->BSRR=(uint32_t) Num[6];
-	GPIOB->BSRR=(uint32_t) (1024<<1) << 16u ;
-	HAL_Delay(500);
-		
-		GPIOA->BSRR=65535 << 16u;//сбросить все
-	GPIOB->BSRR=65535;//установить все		
-	GPIOA->BSRR=(uint32_t) Num[6];
-	GPIOB->BSRR=(uint32_t) (1024<<2) << 16u ;
-	HAL_Delay(500);
-		
-		GPIOA->BSRR=65535 << 16u;//сбросить все
-	GPIOB->BSRR=65535;//установить все		
-	GPIOA->BSRR=(uint32_t) Num[6];
-	GPIOB->BSRR=(uint32_t) (1024<<3) << 16u ;
-	HAL_Delay(500);
-	*/
-		//A=5/3;
-		//B=7/3;
-		//C=7%3;
-		
-		//TIM1_UP_IRQn
-		//HAL_TIMEx_BreakCallback
-		//GPIOA->BSRR=255;
-		//HAL_GPIO_WritePin((GPIO_TypeDef *)GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
-				
-		//GPIO_Write(GPIOA,255,false);
-		//GPIO_Write(GPIOA,102,true);
 		
 		if (ready) 
 		{
@@ -275,12 +243,6 @@ HAL_TIM_Base_Start_IT(&htim1);
 			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
 			ready=0;
 		}
-		
-//GPIO_Write(GPIOA, 76, GPIO_PIN_SET);		
-		
-		//GPIOA->BSRR=(uint32_t)255 << 16u;//установить все
-		//GPIOA->BSRR=255;//сбросить все 				
-	
 	}
     /* USER CODE END WHILE */
 
@@ -424,30 +386,41 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, T_CLK_Pin|T_DAT_Pin|T_RST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, Pos_A_Pin|Pos_B_Pin|Pos_C_Pin|Pos_D_Pin
-                          |Pos_E_Pin|Pos_F_Pin|Pos_G_Pin|Point_Pin, GPIO_PIN_RESET);
+                          |Pos_E_Pin|Pos_F_Pin|Pos_G_Pin|Point_Pin
+                          |T_SCLK_Pin|T_SDA_Pin|T_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, Ind_1_Pin|Ind_2_Pin|Ind_3_Pin|Ind_4_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, T_CLK_Pin|Ind_1_Pin|Ind_2_Pin|Ind_3_Pin
+                          |Ind_4_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : T_CLK_Pin T_DAT_Pin T_RST_Pin */
-  GPIO_InitStruct.Pin = T_CLK_Pin|T_DAT_Pin|T_RST_Pin;
+  /*Configure GPIO pin : LED_Pin */
+  GPIO_InitStruct.Pin = LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Pos_A_Pin Pos_B_Pin Pos_C_Pin Pos_D_Pin
-                           Pos_E_Pin Pos_F_Pin Pos_G_Pin Point_Pin */
+                           Pos_E_Pin Pos_F_Pin Pos_G_Pin Point_Pin
+                           T_SCLK_Pin T_SDA_Pin T_RST_Pin */
   GPIO_InitStruct.Pin = Pos_A_Pin|Pos_B_Pin|Pos_C_Pin|Pos_D_Pin
-                          |Pos_E_Pin|Pos_F_Pin|Pos_G_Pin|Point_Pin;
+                          |Pos_E_Pin|Pos_F_Pin|Pos_G_Pin|Point_Pin
+                          |T_SCLK_Pin|T_SDA_Pin|T_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : T_CLK_Pin */
+  GPIO_InitStruct.Pin = T_CLK_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(T_CLK_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Ind_1_Pin Ind_2_Pin Ind_3_Pin Ind_4_Pin */
   GPIO_InitStruct.Pin = Ind_1_Pin|Ind_2_Pin|Ind_3_Pin|Ind_4_Pin;

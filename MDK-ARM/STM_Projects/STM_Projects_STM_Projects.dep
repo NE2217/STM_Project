@@ -1,9 +1,9 @@
 Dependencies for Project 'STM_Projects', Target 'STM_Projects': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
-F (startup_stm32f103xb.s)(0x643E4A50)(--cpu Cortex-M3 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include--pd "__UVISION_VERSION SETA 534" --pd "_RTE_ SETA 1" --pd "STM32F10X_MD SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f103xb.lst --xref -o stm_projects\startup_stm32f103xb.o --depend stm_projects\startup_stm32f103xb.d)
+F (startup_stm32f103xb.s)(0x643F893C)(--cpu Cortex-M3 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include--pd "__UVISION_VERSION SETA 534" --pd "_RTE_ SETA 1" --pd "STM32F10X_MD SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f103xb.lst --xref -o stm_projects\startup_stm32f103xb.o --depend stm_projects\startup_stm32f103xb.d)
 F (.\LID_func.h)(0x643E233B)()
-F (../Core/Src/main.c)(0x643E7DC4)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\main.o --omf_browse stm_projects\main.crf --depend stm_projects\main.d)
-I (../Core/Inc/main.h)(0x643E233B)
+F (../Core/Src/main.c)(0x643F8FEF)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\main.o --omf_browse stm_projects\main.crf --depend stm_projects\main.d)
+I (../Core/Inc/main.h)(0x643F6565)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x642A47FE)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x643E233B)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x642A47FE)
@@ -32,12 +32,10 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x642A47FE)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x642A47FE)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x642A47FE)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5E8E4AD2)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E4AD2)
 I (.\STM_Projects\stm32f7-ds1302-lib-master\DS1302.h)(0x643B9651)
-I (C:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include\stm32f10x.h)(0x5825467C)
-I (.\RTE\_STM_Projects\RTE_Components.h)(0x643E233B)
-I (C:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include\system_stm32f10x.h)(0x5825467C)
-F (../Core/Src/stm32f1xx_it.c)(0x643E4A6A)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\stm32f1xx_it.o --omf_browse stm_projects\stm32f1xx_it.crf --depend stm_projects\stm32f1xx_it.d)
-I (../Core/Inc/main.h)(0x643E233B)
+F (../Core/Src/stm32f1xx_it.c)(0x643F8936)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\stm32f1xx_it.o --omf_browse stm_projects\stm32f1xx_it.crf --depend stm_projects\stm32f1xx_it.d)
+I (../Core/Inc/main.h)(0x643F6565)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x642A47FE)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x643E233B)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x642A47FE)
@@ -65,9 +63,9 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x642A47FE)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x642A47FE)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x642A47FE)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x642A47FE)
-I (../Core/Inc/stm32f1xx_it.h)(0x643E233B)
-F (../Core/Src/stm32f1xx_hal_msp.c)(0x643E233B)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\stm32f1xx_hal_msp.o --omf_browse stm_projects\stm32f1xx_hal_msp.crf --depend stm_projects\stm32f1xx_hal_msp.d)
-I (../Core/Inc/main.h)(0x643E233B)
+I (../Core/Inc/stm32f1xx_it.h)(0x643F8936)
+F (../Core/Src/stm32f1xx_hal_msp.c)(0x643F8936)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\stm32f1xx_hal_msp.o --omf_browse stm_projects\stm32f1xx_hal_msp.crf --depend stm_projects\stm32f1xx_hal_msp.d)
+I (../Core/Inc/main.h)(0x643F6565)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x642A47FE)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x643E233B)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h)(0x642A47FE)
@@ -516,7 +514,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x642A47FE)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x642A47FE)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x642A47FE)
 F (.\STM_Projects\stm32f7-ds1302-lib-master\DS1302.h)(0x643B9651)()
-F (.\STM_Projects\stm32f7-ds1302-lib-master\DS1302.c)(0x643CB9BE)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\ds1302.o --omf_browse stm_projects\ds1302.crf --depend stm_projects\ds1302.d)
+F (.\STM_Projects\stm32f7-ds1302-lib-master\DS1302.c)(0x643F65BD)(--c99 -c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I .\STM_Projects\stm32f7-ds1302-lib-master -I .\STM_Projects\stm32f7-ds1302-lib-master-I.\RTE\_STM_Projects-IC:\Users\niker\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\niker\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm_projects\ds1302.o --omf_browse stm_projects\ds1302.crf --depend stm_projects\ds1302.d)
 I (STM_Projects\stm32f7-ds1302-lib-master\DS1302.h)(0x643B9651)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x642A47FE)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x643E233B)
