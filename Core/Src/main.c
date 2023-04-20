@@ -140,21 +140,21 @@ void GPIO_Write(uint16_t N) //заполнение массива двузнач
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
-  UNUSED(htim);
+//  UNUSED(htim);
 
-  /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIM_PeriodElapsedCallback could be implemented in the user file
-   */
-	if(A >= LAST) A=0;
-	
-	GPIOA->BSRR=255 << 16u;//сбросить все
-	GPIOB->BSRR=15360;//установить все		
-	GPIOA->BSRR=(uint32_t) Buf[A];
-	GPIOB->BSRR=(uint32_t) (1024<<A) << 16u ;
+//  /* NOTE : This function should not be modified, when the callback is needed,
+//            the HAL_TIM_PeriodElapsedCallback could be implemented in the user file
+//   */
+//	if(A >= LAST) A=0;
+//	
+//	GPIOA->BSRR=255 << 16u;//сбросить все
+//	GPIOB->BSRR=15360;//установить все		
+//	GPIOA->BSRR=(uint32_t) Buf[A];
+//	GPIOB->BSRR=(uint32_t) (1024<<A) << 16u ;
 
-	A++;
-	B++;
-	
+//	A++;
+//	B++;
+//	
 	Led_step++;
 	if (Led_step==LED_FREQ)
 	{
@@ -211,38 +211,38 @@ int main(void)
 	uint16_t T=0;	
 	uint16_t step = 9999;
 	
-	HAL_UART_Receive_IT(&huart1, &Rx, 1);
+//HAL_UART_Receive_IT(&huart1, &Rx, 1);
 	
   while (1)
   {
-		DS1302_ReadTimeBurst(Tim);
-		GPIO_Write(Tim[4]*100+Tim[5]);
+		//DS1302_ReadTimeBurst(Tim);
+		//GPIO_Write(Tim[4]*100+Tim[5]);
 		
-		if (ready)
-		{
-			for (int i=0; i<7; i++)
-			{
-				Init_Tim[i+1]=RxBuf[i];
-				RxBuf[i]=0;
-			}	
-			Init_Tim[0]=1;
-			RxBuf[7]=0;
-			if (memcmp(Init_Tim, Tim, 8) !=0)
-			{
-				DS1302_WriteTime(Init_Tim);
-			}	
-		}
-		
-		if (ready) 
-		{
-			for(uint8_t i = 0; i < 9; i++)
-			{
-				TxBuf[i]=RxBuf[i];
-				RxBuf[i]=0;
-			}
-			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
-			ready=0;
-		}
+//		if (ready)
+//		{
+//			for (int i=0; i<7; i++)
+//			{
+//				Init_Tim[i+1]=RxBuf[i];
+//				RxBuf[i]=0;
+//			}	
+//			Init_Tim[0]=1;
+//			RxBuf[7]=0;
+//			if (memcmp(Init_Tim, Tim, 8) !=0)
+//			{
+//				DS1302_WriteTime(Init_Tim);
+//			}	
+//		}
+//		
+//		if (ready) 
+//		{
+//			for(uint8_t i = 0; i < 9; i++)
+//			{
+//				TxBuf[i]=RxBuf[i];
+//				RxBuf[i]=0;
+//			}
+//			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
+//			ready=0;
+//		}
 	}
     /* USER CODE END WHILE */
 
