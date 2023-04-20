@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
 #include <string.h>
-#include "DS1302.h"
+#include "DS1302.h"//..................................................................//DS1302!!!//
 
 /* USER CODE END Includes */
 
@@ -33,6 +33,17 @@
 #define TX_BUF_SIZE			8u
 #define LAST						4u
 #define LED_FREQ				500u/5u //время полупериода в мс, с шагом в 5мс
+
+typedef struct
+{
+	uint8_t Year;
+	uint8_t Month;
+	uint8_t Data;
+	uint8_t Hour;
+	uint8_t Min;
+	uint8_t Sec;
+	uint8_t Day;
+} t_time;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -42,7 +53,7 @@ const uint16_t Num[10]={63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-uint16_t A,B,C, P1, P2, P3, P4 = 1;
+uint16_t A, B, C, P1, P2, P3, P4 = 1;
 uint8_t Rx=0, Tx=0;
 uint8_t RxBuf[RX_BUF_SIZE]={0}, TxBuf[TX_BUF_SIZE]={0};
 uint8_t shift=0;
@@ -56,9 +67,12 @@ uint8_t Init_Tim[8]={1,		// Control
 										16, 	// Min
 										2, 		// Sec
 										1};		// Day
+t_time *p_Time;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi1;
+
 TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart1;
@@ -72,19 +86,13 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
-//void setPWM(uint16_t pwm_value);
+										
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-////void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-////{
-////      if(htim == &htim1)
-////      {
-////         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-////      }
-////}
 
 int Dim(int count_LED, int on, int off)
 {
@@ -140,26 +148,26 @@ void GPIO_Write(uint16_t N) //заполнение массива двузнач
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
-//  UNUSED(htim);
+  UNUSED(htim);
 
-//  /* NOTE : This function should not be modified, when the callback is needed,
-//            the HAL_TIM_PeriodElapsedCallback could be implemented in the user file
-//   */
-//	if(A >= LAST) A=0;
-//	
-//	GPIOA->BSRR=255 << 16u;//сбросить все
-//	GPIOB->BSRR=15360;//установить все		
-//	GPIOA->BSRR=(uint32_t) Buf[A];
-//	GPIOB->BSRR=(uint32_t) (1024<<A) << 16u ;
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_TIM_PeriodElapsedCallback could be implemented in the user file
+   */
+	if(A >= LAST) A=0;
+	
+	GPIOA->BSRR=255 << 16u;//сбросить все
+	GPIOB->BSRR=15360;//установить все		
+	GPIOA->BSRR=(uint32_t) Buf[A];
+	GPIOB->BSRR=(uint32_t) (1024<<A) << 16u ;
 
-//	A++;
-//	B++;
-//	
+	A++;
+	B++;
+	
 	Led_step++;
 	if (Led_step==LED_FREQ)
 	{
 		Led_step=0;
-			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 	}
 }
 
@@ -182,7 +190,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	DS1302_Init();
+	DS1302_Init();//..............................................................................//DS1302!!!!!!!!//
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -196,6 +204,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 	
 	HAL_TIM_Base_Start_IT(&htim1);	
@@ -205,44 +214,45 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-	//#include <LID_func.h>
 	uint8_t count_LED=0, on=1, off=10;
 	bool up=1;
 	uint16_t T=0;	
 	uint16_t step = 9999;
 	
-//HAL_UART_Receive_IT(&huart1, &Rx, 1);
+HAL_UART_Receive_IT(&huart1, &Rx, 1);
 	
   while (1)
   {
-		//DS1302_ReadTimeBurst(Tim);
-		//GPIO_Write(Tim[4]*100+Tim[5]);
+		DS1302_ReadTimeBurst(Tim);
+		GPIO_Write(Tim[4]*100+Tim[5]);
+	
+		if (ready)
+		{
+			p_Time = (t_time*)&Init_Tim[1];
+			for (int i=0; i<7; i++)
+			{
+				Init_Tim[i+1]=RxBuf[i];
+				RxBuf[i]=0;
+			}	
+			Init_Tim[0]=1;
+			RxBuf[7]=0;
+			if (memcmp(Init_Tim, Tim, 8) !=0)
+			{
+				;
+				DS1302_WriteTime(Init_Tim);
+			}	
+		}
 		
-//		if (ready)
-//		{
-//			for (int i=0; i<7; i++)
-//			{
-//				Init_Tim[i+1]=RxBuf[i];
-//				RxBuf[i]=0;
-//			}	
-//			Init_Tim[0]=1;
-//			RxBuf[7]=0;
-//			if (memcmp(Init_Tim, Tim, 8) !=0)
-//			{
-//				DS1302_WriteTime(Init_Tim);
-//			}	
-//		}
-//		
-//		if (ready) 
-//		{
-//			for(uint8_t i = 0; i < 9; i++)
-//			{
-//				TxBuf[i]=RxBuf[i];
-//				RxBuf[i]=0;
-//			}
-//			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
-//			ready=0;
-//		}
+		if (ready) 
+		{
+			for(uint8_t i = 0; i < 9; i++)
+			{
+				TxBuf[i]=RxBuf[i];
+				RxBuf[i]=0;
+			}
+			HAL_UART_Transmit_IT(&huart1, TxBuf, 9);
+			ready=0;
+		}
 	}
     /* USER CODE END WHILE */
 
@@ -287,6 +297,44 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_1LINE;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_HARD_OUTPUT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_LSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
 }
 
 /**
