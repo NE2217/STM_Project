@@ -29,29 +29,38 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-#define RX_BUF_SIZE			8u
-#define TX_BUF_SIZE			8u
-#define LAST						4u
-#define LED_FREQ				500u/5u //время полупериода в мс, с шагом в 5мс
+struct t_pac
+{
+	uint8_t first;
+	uint8_t data[16];
+	uint8_t crc;
+	uint8_t last;
+};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-const uint16_t Num[10]={63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
+#define RX_BUF_SIZE			19u
+#define TX_BUF_SIZE			8u
+#define LAST						4u
+#define LED_FREQ				3000u/5u //время полупериода в мс, с шагом в 5мс
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+const uint16_t Num[10]={63, 6, 91, 79, 102, 109, 125, 7, 127, 111};
+
 uint16_t A,B,C, P1, P2, P3, P4 = 1;
 uint8_t Rx=0, Tx=0;
 uint8_t RxBuf[RX_BUF_SIZE]={0}, TxBuf[TX_BUF_SIZE]={0};
 uint8_t shift=0;
 uint8_t Tim[8]={0};
 uint8_t Led_step=0;
-uint8_t Init_Tim[8]={1,		// Control
-										23, 	// Year
-										4, 		// Month
-										17,		// Data
+uint8_t Init_Tim[8]={0,		// Control
+										 0, 	// Year
+										 0, 		// Month
+										0,		// Data
 										10, 	// Hour
 										16, 	// Min
 										2, 		// Sec
@@ -130,6 +139,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}	
 }
 
+//void f_test_Pac(uint8_t* data) //функция расшифровки посылки
+//{
+//	for (uint8_t i=0; i<(16*8); i++)
+//	{	
+//		if()
+//	}
+//	
+//}
+
 void GPIO_Write(uint16_t N) //заполнение массива двузначного числа
 {
 	Buf[0] =	Num[N/1000];
@@ -147,16 +165,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
    */
 	if(A >= LAST) A=0;
 	
-	GPIOA->BSRR=255 << 16u;//сбросить все
-	GPIOB->BSRR=15360;//установить все		
-	GPIOA->BSRR=(uint32_t) Buf[A];
-	GPIOB->BSRR=(uint32_t) (1024<<A) << 16u ;
+//	GPIOA->BSRR=255 << 16u;//сбросить все
+//	GPIOB->BSRR=15360;//установить все		
+//	GPIOA->BSRR=(uint32_t) Buf[A];
+//	GPIOB->BSRR=(uint32_t) (1024<<A) << 16u ;
 
-	A++;
-	B++;
+//	A++;
+//	B++;
 	
 	Led_step++;
-	if (Led_step==LED_FREQ)
+	if (Led_step == LED_FREQ)
 	{
 		Led_step=0;
 			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);

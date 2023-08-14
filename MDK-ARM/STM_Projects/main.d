@@ -30,4 +30,4 @@ stm_projects\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 stm_projects\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 stm_projects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 stm_projects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-stm_projects\main.o: .\STM_Projects\stm32f7-ds1302-lib-master\DS1302.h
+stm_projects\main.o: ./STM_Projects/stm32f7-ds1302-lib-master/DS1302.h
